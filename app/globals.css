@@ -1,0 +1,27 @@
+@import "tailwindcss";
+@import "../lib/chaos.css";
+
+@theme inline {
+  --color-background: #eae8ff;
+  --color-foreground: #171438;
+  --font-roboto: var(--font-roboto);
+  --font-roboto-mono: var(--font-roboto-mono-var);
+  --font-mono: var(--font-roboto-mono-var);
+  --font-lobster: var(--font-lobster);
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #ff2079 #171438;
+}
+
+body {
+  background: #eae8ff;
+  color: #171438;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: #ff9500;
+  color: #171438;
+}

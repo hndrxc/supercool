@@ -1,0 +1,124 @@
+:root {
+  --chaos: 1;
+}
+
+.chaotic-wobble {
+  animation: chaotic-wobble calc(0.9s / var(--chaos, 1)) ease-in-out infinite alternate;
+  animation-delay: var(--chaos-delay, 0s);
+}
+
+@keyframes chaotic-wobble {
+  from {
+    transform: rotate(-1.6deg) translateY(-3%) scale(1);
+  }
+  to {
+    transform: rotate(2.2deg) translateY(3%) scale(1.035);
+  }
+}
+
+.chaotic-rainbow {
+  background-image: linear-gradient(90deg, #ff2079, #ff9500, #ffd60a, #32ff75, #24c6ff, #b455ff, #ff2079);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation:
+    chaotic-rainbow calc(4s / var(--chaos, 1)) linear infinite,
+    chaotic-wobble calc(1.4s / var(--chaos, 1)) ease-in-out infinite alternate;
+}
+
+@keyframes chaotic-rainbow {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 200% 50%;
+  }
+}
+
+.chaotic-spin {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: chaotic-spin calc(var(--spin-s, 2.4s) / var(--chaos, 1)) linear infinite;
+  animation-delay: var(--spin-delay, 0s);
+}
+
+@keyframes chaotic-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.chaotic-flicker {
+  animation: chaotic-pulse 1.1s ease-in-out infinite alternate;
+  animation-delay: var(--flicker-delay, 0s);
+}
+
+.chaotic-bounce {
+  animation: chaotic-bounce calc(0.7s / var(--chaos, 1)) ease-in-out infinite alternate;
+  animation-delay: var(--bounce-delay, 0s);
+}
+
+@keyframes chaotic-bounce {
+  from {
+    transform: translateY(0) rotate(-4deg) scale(1);
+  }
+  to {
+    transform: translateY(-12%) rotate(5deg) scale(1.08);
+  }
+}
+
+.chaotic-sweep {
+  background: conic-gradient(
+    from 0deg,
+    rgba(50, 255, 117, 0) 0deg,
+    rgba(50, 255, 117, 0.001) 300deg,
+    rgba(50, 255, 117, 0.5) 352deg,
+    rgba(50, 255, 117, 0.9) 359deg,
+    rgba(50, 255, 117, 0.7) 360deg
+  );
+  border-radius: 9999px;
+  animation: chaotic-spin calc(3.2s / var(--chaos, 1)) linear infinite;
+}
+
+.chaotic-marquee {
+  display: inline-flex;
+  white-space: nowrap;
+  will-change: transform;
+  animation: chaotic-marquee calc(30s / var(--chaos, 1)) linear infinite;
+}
+
+@keyframes chaotic-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.chaotic-pulse {
+  animation: chaotic-pulse max(0.55s, calc(1.1s / var(--chaos, 1))) ease-in-out infinite alternate;
+}
+
+@keyframes chaotic-pulse {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chaotic-wobble,
+  .chaotic-rainbow,
+  .chaotic-spin,
+  .chaotic-flicker,
+  .chaotic-bounce,
+  .chaotic-sweep,
+  .chaotic-marquee,
+  .chaotic-pulse {
+    animation: none;
+  }
+}
