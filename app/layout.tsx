@@ -23,7 +23,7 @@ const lobster = Lobster({
 export const metadata: Metadata = {
   title: "WEATHER.EXE — The Officially Unreliable Forecast",
   description:
-    "100% of our data is real. The rest is weather. Forecasts for the whole sky and parts of the neighborhood.",
+    "Pick a U.S. place or ZIP code and get real conditions and an hourly forecast for a different nearby location.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

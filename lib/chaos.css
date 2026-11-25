@@ -110,6 +110,67 @@
   }
 }
 
+/* The black landing page: a pulsing singularity while the forecast loads. */
+.void-singularity {
+  animation: void-singularity 0.7s ease-in-out infinite alternate;
+}
+
+@keyframes void-singularity {
+  from {
+    transform: scale(0.6);
+    box-shadow: 0 0 6px 2px rgb(255 255 255 / 0.5);
+  }
+  to {
+    transform: scale(1.8);
+    box-shadow: 0 0 28px 10px rgb(255 255 255 / 0.9), 0 0 64px 26px rgb(180 85 255 / 0.55);
+  }
+}
+
+/* The prompt collapses into the singularity when submitted. */
+.void-collapse {
+  animation: void-collapse 0.45s cubic-bezier(0.6, 0, 1, 0.4) forwards;
+}
+
+@keyframes void-collapse {
+  to {
+    transform: scale(0.02, 0.08);
+    opacity: 0;
+  }
+}
+
+/* Exploded page: color everywhere behind the panels. Background-position only,
+   so the root never becomes a containing block for fixed layers. */
+.chaos-backdrop {
+  background: linear-gradient(115deg, #ff2079, #ff9500, #ffd60a, #32ff75, #24c6ff, #b455ff, #ff2079);
+  background-size: 300% 300%;
+  animation: chaos-backdrop calc(10s / var(--chaos, 1)) linear infinite alternate;
+}
+
+@keyframes chaos-backdrop {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+/* Panels fly in from off-screen as the blast opens; set --from-x/y/rot and animation-delay inline. */
+.shrapnel-in {
+  animation: shrapnel-in 0.9s cubic-bezier(0.2, 1.3, 0.4, 1) backwards;
+}
+
+@keyframes shrapnel-in {
+  from {
+    transform: translate(var(--from-x, 0), var(--from-y, 0)) rotate(var(--from-rot, 0deg)) scale(0.3);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .chaotic-wobble,
   .chaotic-rainbow,
@@ -118,7 +179,11 @@
   .chaotic-bounce,
   .chaotic-sweep,
   .chaotic-marquee,
-  .chaotic-pulse {
+  .chaotic-pulse,
+  .void-singularity,
+  .void-collapse,
+  .chaos-backdrop,
+  .shrapnel-in {
     animation: none;
   }
 }

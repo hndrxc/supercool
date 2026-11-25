@@ -1,13 +1,59 @@
 @import "tailwindcss";
 @import "../lib/chaos.css";
+@import "../lib/big-bang.css";
+@import "../lib/flying-debris.css";
 
 @theme inline {
-  --color-background: #eae8ff;
-  --color-foreground: #171438;
+  --color-ink: #171438;
+  --color-paper: #fff7e8;
+  --color-night: #120f2e;
+  --color-night-2: #1d1945;
+  --color-neon-pink: #ff2079;
+  --color-neon-orange: #ff9500;
+  --color-neon-yellow: #ffd60a;
+  --color-neon-lime: #d4ff4f;
+  --color-neon-green: #32ff75;
+  --color-neon-cyan: #24c6ff;
+  --color-neon-violet: #b455ff;
   --font-roboto: var(--font-roboto);
   --font-roboto-mono: var(--font-roboto-mono-var);
   --font-mono: var(--font-roboto-mono-var);
   --font-lobster: var(--font-lobster);
+}
+
+/* Dashboard panel frame: one border, radius, and shadow for every card. */
+@utility panel {
+  border: 3px solid var(--color-ink);
+  border-radius: 1.5rem;
+  box-shadow: 6px 6px 0 0 var(--color-ink);
+}
+
+/* Small tracked label above a panel title or reading. */
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Pill badge; callers pick background, text color, and an optional tilt. */
+@utility sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border: 2px solid var(--color-ink);
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 3px 3px 0 0 var(--color-ink);
 }
 
 html {
@@ -16,7 +62,7 @@ html {
 }
 
 body {
-  background: #eae8ff;
+  background: #000;
   color: #171438;
   overflow-x: hidden;
 }

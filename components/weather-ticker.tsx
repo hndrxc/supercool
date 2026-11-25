@@ -17,7 +17,7 @@ function TickerRun({ offset }: { offset: number }) {
           >
             {item}
           </span>
-          <span className="px-4 text-[#8b87c4]">•</span>
+          <span className="px-3 text-white/30">•</span>
         </span>
       ))}
     </span>
@@ -27,11 +27,11 @@ function TickerRun({ offset }: { offset: number }) {
 export function WeatherTicker() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 flex items-stretch border-t-2 border-[#32ff75] bg-[#171438]">
-      {/* left LIVE bar */}
+      {/* left PARODY bar */}
       <div className="flex flex-none items-center gap-2 border-r-2 border-[#32ff75] bg-[#100e29] px-4 py-2">
         <span className="chaotic-pulse h-2.5 w-2.5 flex-none rounded-full bg-[#32ff75] shadow-[0_0_10px_2px_rgba(50,255,177,0.9)]" />
-        <span className="font-mono text-xs font-bold tracking-[0.3em] text-[#32ff75]">
-          LIVE
+        <span className="font-mono text-xs font-bold tracking-[0.2em] text-[#32ff75]">
+          PARODY
         </span>
       </div>
 

@@ -1,109 +1,86 @@
-import type { ReactNode } from "react";
-import { current } from "@/lib/weather";
+import type { CurrentWeather } from "@/lib/live-weather";
 
-const neonWordColors = [
-  "#ff2fd0",
-  "#00ff9d",
-  "#ffe217",
-  "#00e5ff",
-  "#a7ff00",
-];
+const CARDINALS = [
+  "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+  "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW",
+] as const;
+
+function cardinalFromDegrees(deg: number): string {
+  return CARDINALS[Math.round(deg / 22.5) % 16];
+}
 
 type StatTile = {
   label: string;
-  value: ReactNode;
+  value: string;
   caption?: string;
-  delay: string;
-  span?: boolean;
 };
 
-function FeelsLike() {
-  return (
-    <span className="whitespace-normal">
-      {'a rug that walks'.split(" ").map((word, i) => (
-        <span key={i} className="mr-2 inline-block">
-          <span
-            className="font-roboto-mono inline-block font-black"
-            style={{ color: neonWordColors[i % neonWordColors.length] }}
-          >
-            {word}
-          </span>
-        </span>
-      ))}
-    </span>
-  );
-}
+export function CurrentConditionsPanel({ current }: { current: CurrentWeather }) {
+  const cardinal = cardinalFromDegrees(current.windDirectionDegrees);
 
-export function CurrentConditionsPanel() {
   const tiles: StatTile[] = [
     {
       label: "HUMIDITY",
-      value: (
-        <span>
-          {current.humidity}%
-          <sup className="ml-1 font-roboto-mono text-xs">verified*</sup>
-        </span>
-      ),
+      value: `${current.humidityPercent}%`,
       caption: "verified* (by a pigeon)",
-      delay: "0.1s",
     },
     {
       label: "WIND",
       value: `${current.windKmh} km/h`,
-      caption: current.windDirection,
-      delay: "0.3s",
-    },
-    {
-      label: "UV INDEX",
-      value: current.uvIndex,
-      caption: "do not stare",
-      delay: "0.5s",
-    },
-    {
-      label: "STORM DIAMETER",
-      value: `${current.stormDiameterM} m`,
-      caption: "and growing (mildly)",
-      delay: "0.7s",
+      caption: `${cardinal} · ${Math.round(current.windDirectionDegrees)}°`,
     },
     {
       label: "FEELS LIKE",
-      value: <FeelsLike />,
-      delay: "0.9s",
-      span: true,
+      value: `${current.apparentTemperatureC}°C`,
+    },
+    {
+      label: "READING TIME",
+      value: current.time.slice(11, 16),
+      caption: "destination local",
     },
   ];
 
   return (
-    <section className="@container min-w-0 rotate-1 border-4 border-black bg-[#eaff00] p-5 shadow-[12px_12px_0_0_#171438]">
+    <section className="panel @container min-w-0 flex h-full flex-col bg-paper p-5 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-roboto-mono text-xs font-bold uppercase tracking-[0.25em] text-[#171438]/70">
-          current conditions · live-ish
-        </h2>
-        <div className="chaotic-bounce shrink-0 -rotate-6 border-4 border-double border-black bg-[#ff2fd0] px-3 py-2 shadow-[5px_5px_0_0_#171438]">
-          <p className="font-roboto-mono text-sm font-black uppercase text-black">
-            {current.condition}
-          </p>
-          <p className="font-roboto-mono text-[10px] italic text-black/70">{current.modifier}</p>
+        <div>
+          <p className="eyebrow text-ink/60">Department of Mild Concern</p>
+          <h2 className="font-lobster text-3xl leading-tight text-ink">Current Conditions</h2>
+        </div>
+        <span className="sticker rotate-2 bg-neon-yellow text-ink">
+          {current.condition.icon} live reading
+        </span>
+      </div>
+
+      <div className="mt-5 flex flex-col gap-5 @sm:flex-row @sm:items-end @sm:justify-between">
+        <p className="font-mono text-[min(5.5rem,24cqw)] font-black leading-none tabular-nums text-ink">
+          {`${current.temperatureC}°C`}
+        </p>
+        <div className="flex items-center gap-3 @sm:pb-2">
+          <span aria-hidden className="text-4xl leading-none">{current.condition.icon}</span>
+          <div>
+            <p className="font-mono text-sm font-bold uppercase tracking-[0.18em] text-ink">
+              {current.condition.label}
+            </p>
+            <p className="mt-1 font-mono text-xs text-ink/60">
+              observed {current.time.slice(11, 16)} local
+            </p>
+          </div>
         </div>
       </div>
-      <p className="chaotic-rainbow font-roboto-mono mt-4 whitespace-nowrap text-[min(6rem,24cqw)] leading-none font-black">
-        {`${current.temperatureC}°C`}
-      </p>
-      <p className="mt-2 font-lobster text-2xl text-[#171438]">how it feels</p>
 
       <div className="mt-6 grid grid-cols-2 gap-3">
         {tiles.map((tile) => (
           <div
             key={tile.label}
-            className={`chaotic-wobble border-4 border-dashed border-black bg-[#fff7e8] p-3 ${tile.span ? "col-span-2" : ""}`}
-            style={{ ["--chaos-delay" as string]: tile.delay }}
+            className="flex min-w-0 flex-col gap-1 rounded-2xl border-2 border-ink bg-white p-3"
           >
-            <p className="font-roboto-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#171438]/60">
-              {tile.label}
+            <p className="eyebrow text-ink/55">{tile.label}</p>
+            <p className="break-words font-mono text-[clamp(0.875rem,7cqw,1.5rem)] font-black tabular-nums text-ink">
+              {tile.value}
             </p>
-            <p className="font-roboto-mono text-[clamp(0.875rem,7cqw,1.5rem)] font-black break-words text-[#171438]">{tile.value}</p>
             {tile.caption ? (
-              <p className="font-lobster text-sm text-[#171438]/80">{tile.caption}</p>
+              <p className="text-sm text-ink/60">{tile.caption}</p>
             ) : null}
           </div>
         ))}

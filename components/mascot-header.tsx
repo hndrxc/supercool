@@ -1,12 +1,11 @@
 import type { CSSProperties } from "react";
 import { mascots } from "@/lib/weather";
 
-const puff = mascots[0] ?? { name: "Puff", signature: "cloud with a diploma" };
+const puff = mascots[0] ?? { name: "Puff", signature: "" };
 
 const spinStyleA = { "--spin-s": "3.4s", "--spin-delay": "0.2s" } as CSSProperties;
 const spinStyleB = { "--spin-s": "2.1s", "--spin-delay": "0.9s" } as CSSProperties;
 const bounceStyle = { "--bounce-delay": "0.15s" } as CSSProperties;
-const flickerStyle = { "--flicker-delay": "0.6s" } as CSSProperties;
 
 const INK = "#171438";
 const PINK = "#ff3d6e";
@@ -15,25 +14,26 @@ const ACID = "#d4ff4f";
 
 export function MascotHeader() {
   return (
-    <div className="relative w-full -rotate-2 border-4 border-dashed border-[#171438] bg-white px-4 py-3 shadow-[8px_10px_0_0_#171438] sm:px-6 sm:py-4 sm:shadow-[10px_12px_0_0_#171438]">
-      {/* washi tape, obviously load-bearing */}
-      <div
-        aria-hidden
-        className="absolute -top-3 left-8 h-5 w-20 rotate-[-6deg] border-2 border-dashed border-[#171438] bg-[#d4ff4f]/80"
-      />
-      <div
-        aria-hidden
-        className="absolute -top-2 right-6 h-4 w-14 rotate-[5deg] border-2 border-dashed border-[#171438] bg-[#ff3d6e]/70"
-      />
+    <section className="panel flex h-full flex-col bg-paper p-5 sm:p-6 @container">
+      {/* header row: department label + title, one sticker on the right */}
+      <div className="flex flex-col gap-3 @[380px]:flex-row @[380px]:items-start @[380px]:justify-between">
+        <div className="min-w-0">
+          <p className="eyebrow text-ink">Resident Cloud Authority</p>
+          <h2 className="mt-1 font-lobster text-3xl leading-tight text-ink">
+            Greetings from {puff.name}
+          </h2>
+        </div>
+        <span className="sticker self-start bg-neon-lime text-ink rotate-2">He is very qualified</span>
+      </div>
 
-      <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
-        {/* ======================= THE FIGURE ======================= */}
+      {/* body: the charming Puff illustration + signature */}
+      <div className="mt-5 flex flex-1 flex-col items-center gap-5 @[380px]:flex-row @[380px]:items-center @[380px]:gap-7">
         <svg
           viewBox="0 0 200 170"
-          className="chaotic-bounce h-20 w-20 shrink-0 sm:h-28 sm:w-28 lg:h-32 lg:w-32"
+          className="chaotic-bounce h-24 w-24 shrink-0 @[380px]:h-28 @[380px]:w-28"
           style={bounceStyle}
           role="img"
-          aria-label="Puff, a cloud wearing a graduation cap and scarf"
+          aria-label={`${puff.name}, a cloud wearing a graduation cap and scarf`}
         >
           {/* cloud body — bumpy, one continuous path */}
           <path
@@ -124,31 +124,20 @@ export function MascotHeader() {
           </g>
         </svg>
 
-        {/* ======================= THE WORDS ======================= */}
-        <div className="flex min-w-0 flex-col items-center gap-2 text-center sm:flex-1 sm:items-start sm:text-left sm:gap-2.5">
-          <p className="font-mono text-[9px] font-bold uppercase tracking-[0.25em] text-[#ff3d6e] sm:text-[10px]">
-            ✦ resident cloud authority ✦
-          </p>
-
-          <p className="font-lobster text-2xl leading-tight text-[#171438] sm:text-3xl lg:text-4xl">
-            GREETINGS FROM <span className="inline-block -rotate-2 bg-[#d4ff4f] px-2 [box-decoration-break:clone] sm:px-3">PUFF</span>
-          </p>
-
-          <p className="font-mono text-xs italic text-[#171438]/80 sm:text-sm">
-            ✍ {puff.signature}
-          </p>
-
-          <div className="inline-flex rotate-2 items-center gap-2 border-2 border-dashed border-[#171438] bg-[#7cffce] px-3 py-1 text-[10px] shadow-[3px_3px_0_0_#171438] sm:text-xs">
-            <span className="chaotic-flicker" style={flickerStyle}>
-              ⚡ he is very qualified ⚡
-            </span>
-          </div>
-
-          <p className="mt-0.5 font-mono text-[9px] text-[#171438]/50 sm:text-[10px]">
-            * qualifications verified by an imaginary accrediting body
-          </p>
+        <div className="flex flex-col items-center gap-2 text-center @[380px]:items-start @[380px]:text-left">
+          {puff.signature ? (
+            <p className="font-mono text-sm italic text-ink/85">✍ {puff.signature}</p>
+          ) : null}
         </div>
       </div>
-    </div>
+
+      {/* fine print, pinned to the foot of the card */}
+      <div className="mt-auto pt-5">
+        <div className="mb-3 border-t border-ink/15" />
+        <p className="font-mono text-xs leading-relaxed text-ink/90">
+          * Qualifications verified by an imaginary accrediting body. Résumé available on request.
+        </p>
+      </div>
+    </section>
   );
 }

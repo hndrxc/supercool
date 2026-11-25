@@ -1,135 +1,91 @@
-import type { CSSProperties } from "react";
+import type { HourlyWeather } from "@/lib/live-weather";
 
-type ChaosStyle = CSSProperties & Record<`--${string}`, string | number>;
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 
-type HourCard = {
-  time: string;
-  temp: number;
-  icon: string;
-  condition: string;
-  neon: string;
-};
+function dateLabel(day: string) {
+  const [, month, date] = day.split("-").map(Number);
+  const weekday = WEEKDAYS[new Date(`${day}T00:00:00Z`).getUTCDay()];
+  return `${weekday} ${month}/${date}`;
+}
 
-const HOURS: HourCard[] = [
-  { time: "16:00", temp: 41, icon: "🌞", condition: "Sunnyish", neon: "#ffd60a" },
-  { time: "17:00", temp: 9, icon: "🧶", condition: "RAG SONG", neon: "#ff2079" },
-  { time: "18:00", temp: 27, icon: "🌤️", condition: "Sun-shine-lite", neon: "#ff9500" },
-  { time: "19:00", temp: 12, icon: "🌧️", condition: "LOUD DRIZZLE", neon: "#24c6ff" },
-  { time: "20:00", temp: 33, icon: "🏛️", condition: "Golden Ruin", neon: "#ffb700" },
-  { time: "21:00", temp: 18, icon: "💨", condition: "Windy-ish Prime", neon: "#a7ff00" },
-  { time: "22:00", temp: 25, icon: "☁️", condition: "Cloud of Suspense", neon: "#b455ff" },
-  { time: "23:00", temp: 14, icon: "😴", condition: "Napping", neon: "#32ff75" },
-];
-
-const BORDER_STYLES = ["solid", "dashed", "double"] as const;
-
-export function HourlyForecastStrip() {
+export function HourlyForecastStrip({ hourly, timezone }: { hourly: HourlyWeather[]; timezone: string }) {
   return (
-    <section className="relative -rotate-[0.4deg] border-4 border-black bg-[#241447] p-5 shadow-[10px_10px_0_0_#ff2fd0]">
+    <section className="panel relative flex h-full flex-col bg-night p-5 sm:p-6">
       <style>{`
         .hourly-strip {
           scrollbar-width: thin;
-          scrollbar-color: #ff2079 #12092b;
+          scrollbar-color: #ff2079 #1d1945;
+          overscroll-behavior-x: contain;
         }
         .hourly-strip::-webkit-scrollbar {
           height: 12px;
         }
         .hourly-strip::-webkit-scrollbar-track {
-          background: #12092b;
-          border: 2px dashed #ff2079;
-          border-radius: 8px;
+          background: #1d1945;
+          border: 2px solid rgba(255, 255, 255, 0.15);
+          border-radius: 9999px;
         }
         .hourly-strip::-webkit-scrollbar-thumb {
-          background: linear-gradient(90deg, #ff2079, #ffd60a, #32ff75, #b455ff);
-          border-radius: 8px;
-          border: 2px solid #12092b;
+          background: linear-gradient(90deg, #ff2079, #ff9500, #ffd60a, #32ff75);
+          border-radius: 9999px;
+          border: 2px solid #120f2e;
         }
         .hourly-strip::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(90deg, #ffd60a, #ff2079, #24c6ff);
+          background: linear-gradient(90deg, #ffd60a, #24c6ff, #b455ff);
         }
       `}</style>
 
-      {/* rainbow dashed top border: gradient bar, mask-cut into dashes */}
-      <div
-        aria-hidden
-        className="absolute -top-[9px] inset-x-2 h-2"
-        style={{
-          backgroundImage:
-            "linear-gradient(90deg, #ff2079, #ff9500, #ffd60a, #32ff75, #24c6ff, #b455ff, #ff2079)",
-          backgroundSize: "200% 100%",
-          WebkitMaskImage:
-            "repeating-linear-gradient(90deg, #000 0 16px, transparent 16px 28px)",
-          maskImage:
-            "repeating-linear-gradient(90deg, #000 0 16px, transparent 16px 28px)",
-        }}
-      />
-
-      <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="chaotic-rainbow font-lobster text-3xl leading-none sm:text-4xl">
-            HOUR-BY-HOUR CHAOS
-          </h2>
-          <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.25em] text-[#b7a8e8]">
-            next 8 hours · accuracy 37% (unverified by anyone)
-          </p>
+          <p className="eyebrow text-white/60">Bureau of Approximate Skies</p>
+          <h2 className="font-lobster text-3xl leading-tight text-white">Hour-by-Hour</h2>
         </div>
-        <span className="chaotic-flicker -rotate-6 border-2 border-dashed border-[#a7ff00] px-3 py-1 font-mono text-[10px] font-black tracking-[0.3em] text-[#a7ff00] shadow-[4px_4px_0_0_#12092b]">
-          SCROLL ⇄ FOR VIBES
-        </span>
+        <span className="sticker -rotate-2 bg-neon-green text-ink">Next {hourly.length} hours ⇄</span>
       </div>
 
-      <div
-        className="hourly-strip -mx-1 mt-2 overflow-x-auto"
-        style={{ scrollbarWidth: "thin", scrollbarColor: "#ff2079 #12092b" }}
-      >
-        <ol className="flex w-max items-stretch gap-6 px-4 pt-8 pb-4">
-          {HOURS.map((hour, i) => (
-            <li
-              key={hour.time}
-              style={{
-                transform: i % 2 === 0 ? "rotate(1.75deg)" : "rotate(-2.25deg)",
-              }}
-            >
-              <div
-                className="chaotic-bounce w-40 flex-none border-[3px] bg-[#150b30] px-4 py-4 text-center shadow-[6px_6px_0_0_#ff2fd0]"
-                style={{
-                  "--bounce-delay": `${(i * 0.1).toFixed(1)}s`,
-                  borderColor: hour.neon,
-                  borderStyle: BORDER_STYLES[i % BORDER_STYLES.length],
-                } as ChaosStyle}
-              >
-                <p
-                  className="font-mono text-[11px] font-bold tracking-[0.3em]"
-                  style={{ color: hour.neon, textShadow: `0 0 10px ${hour.neon}` }}
-                >
-                  {hour.time}
-                </p>
-                <div className="mt-2 text-4xl leading-none drop-shadow-[0_0_12px_rgba(255,255,255,0.35)]">
-                  {hour.icon}
-                </div>
-                <p
-                  className="mt-2 font-mono text-[10px] font-black uppercase tracking-[0.18em]"
-                  style={{ color: hour.neon, textShadow: `0 0 8px ${hour.neon}` }}
-                >
-                  {hour.condition}
-                </p>
-                <p
-                  className="font-roboto-mono text-5xl font-black leading-none"
-                  style={{ color: hour.neon, textShadow: `0 0 16px ${hour.neon}` }}
-                >
-                  {hour.temp}°
-                </p>
-                <p className="mt-2 font-mono text-[10px] text-[#b7a8e8]">
-                  high of {hour.temp}°C (trust us)
-                </p>
-              </div>
+      <div className="hourly-strip snap-x mt-5 -mx-1 overflow-x-auto">
+        <ol className="flex w-max min-w-full items-stretch gap-3 px-1 pb-2 pt-1">
+          {hourly.length === 0 ? (
+            <li className="flex w-64 flex-none items-center justify-center rounded-2xl border-2 border-white/15 bg-night-2 p-4 text-center">
+              <p className="font-mono text-sm font-bold uppercase tracking-[0.2em] text-white/80">
+                no hourly data right now
+              </p>
             </li>
-          ))}
+          ) : (
+            hourly.map((hour, i) => {
+              const day = hour.time.slice(0, 10);
+              const startsDay = i === 0 || !hourly[i - 1].time.startsWith(day);
+              return (
+                <li key={hour.time} className="min-w-32 flex-1 snap-start">
+                  <div className="flex h-full flex-col rounded-2xl border-2 border-white/15 bg-night-2 p-3 text-center">
+                    {startsDay ? (
+                      <p className="eyebrow text-neon-cyan">{dateLabel(day)}</p>
+                    ) : null}
+                    <time
+                      dateTime={hour.time}
+                      className="mt-2 font-mono text-sm font-bold tracking-[0.2em] text-white"
+                    >
+                      {hour.time.slice(11)}
+                    </time>
+                    <div aria-hidden className="mt-3 text-4xl leading-none">
+                      {hour.condition.icon}
+                    </div>
+                    <p className="mt-2 break-words font-mono text-xs font-bold uppercase leading-snug tracking-[0.12em] text-white/85">
+                      {hour.condition.label}
+                    </p>
+                    <p className="mt-auto pt-3 font-mono text-4xl font-black leading-none tabular-nums text-neon-lime">
+                      {hour.temperatureC}°
+                    </p>
+                  </div>
+                </li>
+              );
+            })
+          )}
         </ol>
       </div>
 
-      <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-[#b7a8e8]/70">
-        ⚠️ times imaginary · temperatures emotional · do not schedule anything
+      <p className="mt-3 border-t border-white/15 pt-3 text-center font-mono text-xs uppercase tracking-[0.2em] text-white/60">
+        data: open-meteo · local timezone: {timezone} · endorsed by nobody
       </p>
     </section>
   );

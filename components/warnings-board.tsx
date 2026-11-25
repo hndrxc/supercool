@@ -1,84 +1,60 @@
-import type { CSSProperties } from "react";
 import { alerts } from "@/lib/weather";
 
-// CSS custom properties (like --chaos-delay) are not declared on CSSProperties,
-// so extend it with a template-literal index signature instead of casting to any.
-type ChaosStyle = CSSProperties & Record<`--${string}`, string | number>;
-
-const paperColors = ["#fdf6d8", "#fbd9e0", "#d8f3dc", "#dbe7ff", "#fff3c4"];
-const rotations = ["-rotate-3", "rotate-2", "-rotate-2", "rotate-3", "-rotate-1"];
+const PIN_TILTS = ["rotate-3", "-rotate-2", "rotate-2"];
 
 export function WarningsBoard() {
   return (
-    <section className="relative rounded-xl bg-amber-100 border-8 border-[#7c4a12] p-5 pt-10 shadow-[8px_8px_0_0_#171438]">
-      {/* header plank */}
-      <div className="absolute -top-6 left-1/2 w-[92%] -translate-x-1/2 -rotate-2 rounded-md bg-[#8b5a2b] border-4 border-[#5c3a15] px-6 py-3 shadow-[5px_5px_0_0_rgba(0,0,0,0.35)]">
-        <h2 className="font-lobster text-3xl sm:text-4xl text-amber-50 tracking-wide drop-shadow-[3px_3px_0_rgba(0,0,0,0.45)]">
-          DO NOT PANIC TOO HARDLY
-        </h2>
-        <p className="font-mono text-xs text-amber-200 mt-1">
-          OFFICIAL WARNINGS — issued by the Department of (Mild) Concern
-        </p>
-      </div>
+    <section className="panel flex h-full flex-col bg-paper p-5 sm:p-6 @container">
+      {/* header */}
+      <header className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
+        <div>
+          <p className="eyebrow text-ink/70">Bureau of Approximate Skies</p>
+          <h2 className="mt-1 font-lobster text-3xl leading-tight text-ink">
+            Do Not Panic (Too Hard)
+          </h2>
+        </div>
+        <span className="sticker rotate-2 bg-neon-yellow text-ink">Parody</span>
+      </header>
 
-      {/* leftover cork-burrs on the board */}
-      <div className="absolute top-2 left-4 h-3 w-3 rounded-full bg-[#2f2f2f] opacity-30" />
-      <div className="absolute top-3 right-6 h-2.5 w-2.5 rounded-full bg-[#2f2f2f] opacity-30" />
-      <div className="absolute top-14 left-10 h-2 w-2 rounded-full bg-[#2f2f2f] opacity-20" />
+      <p className="mt-3 font-mono text-sm font-bold uppercase tracking-wider text-ink/70">
+        Issued by the Department of Mild Concern
+      </p>
 
-      {/* corkboard surface */}
-      <div
-        className="relative grid gap-6 rounded-lg p-4"
-        style={{
-          boxShadow: "inset 0 0 24px rgba(75, 41, 9, 0.45)",
-          background:
-            "radial-gradient(rgba(124,74,18,0.12) 1.5px, transparent 1.5px) 0 0 / 14px 14px, linear-gradient(160deg, #f3e3b8, #ead199)",
-        }}
-      >
+      {/* pinned memos */}
+      <div className="mt-5 grid gap-5">
         {alerts.map((alert, i) => (
           <article
-            key={alert}
-            className={`chaotic-wobble relative rounded-sm border-x-4 border-b-4 border-[#00000022] px-4 py-3 pt-5 shadow-[6px_6px_0_rgba(0,0,0,0.25)] ${rotations[i % rotations.length]}`}
-            style={
-              {
-                backgroundColor: paperColors[i % paperColors.length],
-                "--chaos-delay": `${-(i + 1) * 0.4}s`,
-              } as ChaosStyle
-            }
+            key={alert.title}
+            className="relative rounded-xl border-2 border-ink bg-white px-4 pb-4 pt-5 shadow-[3px_3px_0_0_var(--color-ink)]"
           >
-            {/* red pin */}
-            <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 h-6 w-6 rounded-full bg-red-500 border-2 border-red-800 shadow-[2px_3px_2px_rgba(0,0,0,0.4)]" />
-
-            <h3 className="font-roboto-mono font-mono text-sm font-bold text-[#3a2a12] underline decoration-red-600">
-              {`⚠ ${alert.split(":")[0]}`}
+            <span
+              className={`absolute -top-3 left-1/2 h-5 w-5 -translate-x-1/2 rounded-full border-2 border-red-900 bg-red-500 shadow-[1px_2px_0_0_rgba(0,0,0,0.35)] ${PIN_TILTS[i % PIN_TILTS.length]}`}
+            />
+            <h3 className="flex items-center gap-2 font-mono text-sm font-black uppercase tracking-widest text-ink">
+              <span className="text-neon-pink">⚠</span>
+              {alert.title}
             </h3>
-            <p className="mt-2 border-b-4 border-dashed border-[#00000055] pb-2 text-sm leading-snug text-[#4a3419]">
-              {alert.includes(":") ? alert.split(":").slice(1).join(":") : alert}
-            </p>
-
-            {/* tiny corner curl */}
-            <span className="absolute bottom-0 right-0 h-0 w-0 border-t-8 border-l-8 border-t-transparent border-l-amber-200/70" />
+            <p className="mt-2 text-sm leading-snug text-ink/80">{alert.body}</p>
           </article>
         ))}
 
-        {/* rubber-stamp fallback when the board is suspiciously quiet */}
         {alerts.length === 0 && (
-          <article
-            className="chaotic-wobble relative rounded-sm bg-[#fbd9e0] border-x-4 border-b-4 border-[#00000022] px-4 py-4 text-center shadow-[6px_6px_0_rgba(0,0,0,0.25)] -rotate-1"
-            style={{ "--chaos-delay": "-1.2s" } as ChaosStyle}
-          >
-            <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 h-6 w-6 rounded-full bg-red-500 border-2 border-red-800 shadow-[2px_3px_2px_rgba(0,0,0,0.4)]" />
-            <p className="font-mono text-sm text-[#4a3419]">NO WARNINGS (suspiciously)</p>
+          <article className="relative rounded-xl border-2 border-ink bg-white px-4 py-6 text-center shadow-[3px_3px_0_0_var(--color-ink)]">
+            <span className="absolute -top-3 left-1/2 h-5 w-5 -translate-x-1/2 rounded-full border-2 border-red-900 bg-red-500 shadow-[1px_2px_0_0_rgba(0,0,0,0.35)] rotate-3" />
+            <p className="font-mono text-sm font-bold uppercase tracking-widest text-ink/70">
+              No Warnings (suspiciously)
+            </p>
           </article>
         )}
       </div>
 
-      {/* bottom strip */}
-      <div className="mt-4 rounded-md bg-[#171438] px-4 py-2 border-2 border-dashed border-amber-300 text-center">
-        <p className="font-mono text-xs text-amber-200 tracking-widest">
-          warnings are weather. weather is warnings.
+      {/* fine print */}
+      <footer className="mt-auto pt-4">
+        <div className="border-t-2 border-ink/15" />
+        <p className="pt-3 text-center font-mono text-xs font-bold uppercase tracking-widest text-ink/60">
+          Warnings are weather. Weather is warnings.
         </p>
-      </div>
+      </footer>
     </section>
   );
 }

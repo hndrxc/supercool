@@ -1,0 +1,186 @@
+/* lib/big-bang.css
+   One-shot full-screen explosion overlay for the landing-page transition.
+   It plays once each time <BigBang /> is mounted (the parent re-keys it
+   per search, so it replays). This is a single ~2s reveal, NOT a
+   continuous chaotic animation, so durations are intentionally not scaled
+   by --chaos. All keyframe names are prefixed big-bang-.
+
+   Stacking: the overlay is fixed, z-index 50, pointer-events none,
+   aria-hidden (set in the component), and ends opacity 0 + visibility
+   hidden via animation-fill-mode: both / forwards. */
+
+.big-bang {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  overflow: hidden;
+  animation: big-bang-overlay 2s linear both;
+}
+
+/* Registered so the mask's hole radius interpolates; gradients themselves do not. */
+@property --bb-hole {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+/* Solid black cover that is blown away from the center like an iris /
+   shock-hole, revealing the colorful page beneath. Frame 0 is fully
+   black so the page underneath never flashes early. */
+.big-bang__cover {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  mask-image: radial-gradient(circle at 50% 50%, transparent var(--bb-hole), #000 calc(var(--bb-hole) + 2%));
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent var(--bb-hole), #000 calc(var(--bb-hole) + 2%));
+  animation: big-bang-cover 2s ease-in-out both;
+}
+
+/* Tiny white-hot core at screen center that swells and flashes. */
+.big-bang__core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #fff 0%, rgba(255, 255, 255, 0.4) 45%, transparent 72%);
+  box-shadow: 0 0 40px 16px rgba(255, 255, 255, 0.75);
+  animation: big-bang-core 2s ease-out both;
+  will-change: transform, opacity, filter;
+}
+
+/* Neon shockwave rings blasting outward past the viewport edges. */
+.big-bang__ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 60px;
+  height: 60px;
+  margin: -30px 0 0 -30px;
+  border-radius: 9999px;
+  border: 3px solid var(--bb-ring-color);
+  box-shadow:
+    0 0 18px var(--bb-ring-color),
+    inset 0 0 18px var(--bb-ring-color);
+  opacity: 0;
+  animation-name: big-bang-ring;
+  animation-duration: var(--bb-ring-dur);
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-delay: var(--bb-ring-delay);
+  animation-fill-mode: both;
+  will-change: transform, opacity;
+}
+
+/* Shards (neon chips / weather emoji) flung outward with spin and scale.
+   Direction comes from per-element --bb-x / --bb-y custom properties that
+   are precomputed deterministically in the component. */
+.big-bang__shard {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--bb-size);
+  height: var(--bb-size);
+  margin: calc(var(--bb-size) / -2);
+  border-radius: 3px;
+  background: linear-gradient(135deg, var(--bb-color), #fff6 55%, var(--bb-color));
+  box-shadow: 0 0 12px var(--bb-color);
+  animation-name: big-bang-shard;
+  animation-duration: var(--bb-dur);
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-delay: var(--bb-delay);
+  animation-fill-mode: both;
+  will-change: transform, opacity;
+}
+
+.big-bang__shard--emoji {
+  display: grid;
+  place-items: center;
+  background: none;
+  box-shadow: none;
+  font-size: var(--bb-size);
+  line-height: 1;
+}
+
+@keyframes big-bang-overlay {
+  0%, 78% {
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes big-bang-cover {
+  0%,
+  18% {
+    --bb-hole: 0%;
+  }
+  100% {
+    --bb-hole: 118%;
+  }
+}
+
+@keyframes big-bang-core {
+  0% {
+    transform: scale(0.1);
+    opacity: 0;
+    filter: brightness(1.5);
+  }
+  10% {
+    opacity: 1;
+  }
+  22% {
+    transform: scale(1.8);
+    opacity: 1;
+    filter: brightness(3);
+  }
+  38% {
+    transform: scale(2.4);
+    opacity: 0.4;
+    filter: brightness(2);
+  }
+  55%, 100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@keyframes big-bang-ring {
+  0% {
+    transform: scale(0.2);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(40);
+    opacity: 0;
+  }
+}
+
+@keyframes big-bang-shard {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.1);
+    opacity: 1;
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--bb-x), var(--bb-y), 0) rotate(var(--bb-spin)) scale(1.15);
+    opacity: 0;
+  }
+}
+
+/* Reduced motion: render nothing visible so the page shows immediately. */
+@media (prefers-reduced-motion: reduce) {
+  .big-bang {
+    display: none;
+  }
+}
